@@ -6,6 +6,7 @@ load_dotenv()
 
 class Settings:
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY")
 
     # Change this to a model available in your Google AI Studio account.
     GEMINI_MODEL = os.getenv(

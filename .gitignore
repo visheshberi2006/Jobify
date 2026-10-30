@@ -218,3 +218,13 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+backend/models/
+backend/.vscode/
+backend/engine/skill_gap_backup.py
+backend/sample_resume.pdf
+
+__pycache__/
+*.py[cod]
+*.joblib
+models/
+.vscode/
