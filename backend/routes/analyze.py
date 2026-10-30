@@ -26,10 +26,23 @@ class AnalyzeRequest(BaseModel):
         return value
 
 
-@router.post("/analyze")
-def analyze_message(request: AnalyzeRequest):
+def analyze_text(message: str) -> dict:
+    """Run the complete ScamShield fraud detection pipeline."""
 
-    message = request.text
+    if not isinstance(message, str):
+        raise ValueError("Input must be text.")
+
+    message = message.strip()
+
+    if len(message) < 10:
+        raise ValueError(
+            "Message must contain at least 10 characters."
+        )
+
+    if len(message) > 5000:
+        raise ValueError(
+            "Message cannot exceed 5000 characters."
+        )
 
     # 1. Rule-based detection
     local_result = analyze_rules(message)
@@ -37,7 +50,7 @@ def analyze_message(request: AnalyzeRequest):
     # 2. ML prediction
     ml_score = predict_scam(message)
 
-    # 3. Combine rule and ML scores (60/40)
+    # 3. Combined risk score
     score = calculate_risk(
         local_result["rule_score"],
         ml_score
@@ -45,7 +58,7 @@ def analyze_message(request: AnalyzeRequest):
 
     risk_level = get_risk_level(score)
 
-    # 4. Gemini explanation
+    # 4. AI explanation
     gemini_result = analyze_with_gemini(
         message,
         local_result
@@ -70,7 +83,7 @@ def analyze_message(request: AnalyzeRequest):
             "guarantee legitimacy. Verify the employer independently."
         )
 
-    # 6. Structured API response
+    # 6. Structured response
     return {
         "project": "ScamShield AI",
         "risk_score": score,
@@ -82,3 +95,8 @@ def analyze_message(request: AnalyzeRequest):
         "recommendation": recommendation,
         "gemini_analysis": gemini_result
     }
+
+
+@router.post("/analyze")
+def analyze_message(request: AnalyzeRequest):
+    return analyze_text(request.text)
