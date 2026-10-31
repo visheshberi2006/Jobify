@@ -1,16 +1,14 @@
 
 import logging
+import importlib
 import re
 from pathlib import Path
-
-import joblib
 
 logger = logging.getLogger(__name__)
 
 # Locate the model relative to the backend directory
 BASE_DIR = Path(__file__).resolve().parent.parent
-MODEL_PATH = BASE_DIR / "models" / "emscad_scam_detector.joblib"
-
+MODEL_PATH = BASE_DIR / "models" / "jobify_scam_detector.joblib"
 _model = None
 
 
@@ -22,6 +20,15 @@ def load_model():
             raise FileNotFoundError(
                 f"Scam detection model not found: {MODEL_PATH}"
             )
+
+        try:
+            joblib = importlib.import_module("joblib")
+        except ModuleNotFoundError as exc:
+            if exc.name == "joblib":
+                raise RuntimeError(
+                    "The scam detection model requires the 'joblib' package."
+                ) from exc
+            raise
 
         _model = joblib.load(MODEL_PATH)
 
