@@ -40,6 +40,7 @@ from routes.analyze import router as analyze_router
 from routes.resume import router as resume_router
 from routes.skill_coach import router as skill_coach_router
 from routes.document_analysis import router as document_router
+from routes.email import router as email_router
 app = FastAPI(
     title="ScamShield AI",
     description="AI-powered job fraud detection platform",
@@ -59,6 +60,7 @@ app.include_router(analyze_router, prefix="/api")
 app.include_router(resume_router, prefix="/api")
 app.include_router(skill_coach_router, prefix="/api")
 app.include_router(document_router, prefix="/api")
+app.include_router(email_router, prefix="/api")
 
 
 @app.get("/")
