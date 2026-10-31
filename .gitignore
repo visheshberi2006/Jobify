@@ -187,3 +187,17 @@ models/
 backend/models/*
 !backend/models/
 !backend/models/emscad_scam_detector.joblib
+# Google OAuth credentials
+backend/credentials/
+backend/token.json
+# Jobify local and sensitive files
+backend/.venv/
+backend/**/__pycache__/
+backend/.env
+backend/credentials/
+backend/token.json
+backend/jobify.db
+
+# Frontend dependencies and build output
+frontend/node_modules/
+frontend/dist/
