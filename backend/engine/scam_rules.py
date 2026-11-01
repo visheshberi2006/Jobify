@@ -1,8 +1,6 @@
 
 import re
 
-# Compile patterns once when the module loads.
-
 SCAM_RULES = [
     {
         "name": "Upfront employment payment",
@@ -17,7 +15,9 @@ SCAM_RULES = [
             re.IGNORECASE
         ),
         "weight": 35,
-        "category": "JOB_FEE_SCAM"
+        "category": "JOB_FEE_SCAM",
+        "severity": "HIGH",
+        "explanation": "The message mentions a registration, joining or employment-related payment."
     },
     {
         "name": "Task recharge or account funding",
@@ -30,16 +30,20 @@ SCAM_RULES = [
             re.IGNORECASE
         ),
         "weight": 30,
-        "category": "TASK_SCAM"
+        "category": "TASK_SCAM",
+        "severity": "HIGH",
+        "explanation": "The message refers to funding or recharging an account to access tasks or earnings."
     },
     {
         "name": "Unrealistic earnings",
         "pattern": re.compile(
-            r"\b(earn|make)\s*(\u20b9|rs\.?|inr)?\s*[\d,]+\s*(daily|per\s+day|a\s+day)\b",
+            r"\b(earn|make)\s*(₹|rs\.?|inr)?\s*[\d,]+\s*(daily|per\s+day|a\s+day)\b",
             re.IGNORECASE
         ),
         "weight": 15,
-        "category": "JOB_SCAM"
+        "category": "JOB_SCAM",
+        "severity": "MEDIUM",
+        "explanation": "The message advertises a daily earning amount that may warrant verification."
     },
     {
         "name": "Urgency or pressure",
@@ -49,7 +53,9 @@ SCAM_RULES = [
             re.IGNORECASE
         ),
         "weight": 10,
-        "category": "SUSPICIOUS_RECRUITMENT"
+        "category": "SUSPICIOUS_RECRUITMENT",
+        "severity": "LOW",
+        "explanation": "The message uses urgency or pressure to encourage a quick decision."
     },
     {
         "name": "Sensitive information requested",
@@ -69,7 +75,9 @@ SCAM_RULES = [
             re.IGNORECASE
         ),
         "weight": 40,
-        "category": "CREDENTIAL_THEFT"
+        "category": "CREDENTIAL_THEFT",
+        "severity": "HIGH",
+        "explanation": "The message appears to request sensitive banking or account credentials."
     },
     {
         "name": "Payment required to withdraw earnings",
@@ -86,7 +94,9 @@ SCAM_RULES = [
             re.IGNORECASE
         ),
         "weight": 35,
-        "category": "TASK_SCAM"
+        "category": "TASK_SCAM",
+        "severity": "HIGH",
+        "explanation": "The message links payment or deposits to withdrawing earnings."
     },
     {
         "name": "Guaranteed income promise",
@@ -96,7 +106,9 @@ SCAM_RULES = [
             re.IGNORECASE
         ),
         "weight": 10,
-        "category": "SUSPICIOUS_RECRUITMENT"
+        "category": "SUSPICIOUS_RECRUITMENT",
+        "severity": "MEDIUM",
+        "explanation": "The message makes unusually easy or guaranteed earning claims."
     },
     {
         "name": "Money required to activate employment",
@@ -108,9 +120,10 @@ SCAM_RULES = [
             re.IGNORECASE
         ),
         "weight": 25,
-        "category": "JOB_FEE_SCAM"
+        "category": "JOB_FEE_SCAM",
+        "severity": "HIGH",
+        "explanation": "The message connects a payment with activating or confirming employment."
     },
-    
     {
         "name": "Refundable security or employment fee",
         "pattern": re.compile(
@@ -121,7 +134,9 @@ SCAM_RULES = [
             re.IGNORECASE
         ),
         "weight": 40,
-        "category": "JOB_FEE_SCAM"
+        "category": "JOB_FEE_SCAM",
+        "severity": "HIGH",
+        "explanation": "The message describes an employment-related security or refundable fee."
     },
     {
         "name": "Payment for employee identification",
@@ -132,7 +147,9 @@ SCAM_RULES = [
             re.IGNORECASE
         ),
         "weight": 40,
-        "category": "JOB_FEE_SCAM"
+        "category": "JOB_FEE_SCAM",
+        "severity": "HIGH",
+        "explanation": "The message connects payment with employee identification."
     },
     {
         "name": "Payment to upgrade task account",
@@ -147,7 +164,9 @@ SCAM_RULES = [
             re.IGNORECASE
         ),
         "weight": 40,
-        "category": "TASK_SCAM"
+        "category": "TASK_SCAM",
+        "severity": "HIGH",
+        "explanation": "The message connects task packages or ratings with additional payments."
     }
 ]
 
@@ -158,10 +177,20 @@ def analyze_rules(message: str) -> dict:
     categories = []
 
     for rule in SCAM_RULES:
-        if rule["pattern"].search(message):
+        matches = list(rule["pattern"].finditer(message))
+
+        if matches:
+            evidence = list(dict.fromkeys(
+                match.group(0) for match in matches
+            ))
+
             indicators.append({
                 "name": rule["name"],
-                "weight": rule["weight"]
+                "weight": rule["weight"],
+                "category": rule["category"],
+                "severity": rule["severity"],
+                "explanation": rule["explanation"],
+                "evidence": evidence
             })
 
             total_score += rule["weight"]

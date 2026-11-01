@@ -88,3 +88,85 @@ def predict_scam(message: str) -> float:
     fraud_score = float(probabilities[fraud_index]) * 100
 
     return round(fraud_score, 2)
+
+def explain_scam_prediction(message: str, top_n: int = 8) -> dict:
+    """
+    Explain the Logistic Regression prediction using
+    TF-IDF feature contributions.
+
+    Contributions are additive contributions to the
+    classifier's fraud-vs-legitimate decision score.
+    They are not fraud probabilities.
+    """
+    import numpy as np
+
+    if not isinstance(message, str) or not message.strip():
+        raise ValueError("Message must not be empty.")
+
+    if not isinstance(top_n, int) or top_n < 1:
+        raise ValueError("top_n must be a positive integer.")
+
+    model = load_model()
+
+    vectorizer = model.named_steps["tfidf"]
+    classifier = model.named_steps["classifier"]
+
+    cleaned_message = prepare_message(message)
+    features = vectorizer.transform([cleaned_message])
+
+    # Locate the coefficient for the fraudulent class.
+    fraud_index = list(classifier.classes_).index(1)
+    coefficients = (
+    classifier.coef_[0]
+    if len(classifier.classes_) == 2
+    else classifier.coef_[fraud_index]
+)
+
+    # Each feature's contribution to the fraud decision score.
+    contributions = features.multiply(coefficients).toarray()[0]
+
+    feature_names = vectorizer.get_feature_names_out()
+
+    # Positive = pushes toward fraud.
+    # Negative = pushes toward legitimate.
+    fraud_indices = np.where(contributions > 0)[0]
+    legitimate_indices = np.where(contributions < 0)[0]
+
+    fraud_indices = sorted(
+        fraud_indices,
+        key=lambda i: contributions[i],
+        reverse=True
+    )[:top_n]
+
+    legitimate_indices = sorted(
+        legitimate_indices,
+        key=lambda i: contributions[i]
+    )[:top_n]
+
+    fraud_contributors = [
+        {
+            "feature": str(feature_names[i]),
+            "contribution": round(float(contributions[i]), 6)
+        }
+        for i in fraud_indices
+    ]
+
+    legitimate_contributors = [
+        {
+            "feature": str(feature_names[i]),
+            "contribution": round(float(contributions[i]), 6)
+        }
+        for i in legitimate_indices
+    ]
+
+    return {
+        "fraud_contributors": fraud_contributors,
+        "legitimate_contributors": legitimate_contributors,
+        "explanation_method": "TF-IDF feature contributions with Logistic Regression",
+        "interpretation": (
+            "Positive contributions push the classifier toward fraud; "
+            "negative contributions push it toward legitimate. "
+            "These are model decision-score contributions, not probabilities "
+            "or proof of fraud."
+        )
+    }

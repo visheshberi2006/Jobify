@@ -1,0 +1,186 @@
+/* Jobify readability and layout overrides */
+:root {
+  --jobify-body-size: 15px;
+}
+
+/* Make the overall interface easier to read without changing its visual identity. */
+html {
+  font-size: 16px;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: 15px;
+}
+
+body {
+  line-height: 1.55;
+}
+
+p,
+label,
+input,
+textarea,
+button,
+small,
+.nav-item,
+.breadcrumbs,
+.privacy-note,
+.input-foot,
+.sample-row,
+.indicator,
+.quick-item,
+.tip-card,
+.feature-card,
+.security-mini,
+.user-meta,
+.panel-tag,
+.demo-badge {
+  font-size: 15px;
+}
+
+p,
+.page-heading p,
+.hero-description,
+.tip-card p,
+.feature-card p,
+.roadmap-preview p {
+  line-height: 1.65;
+}
+
+h1 { font-size: clamp(28px, 2.4vw, 36px); line-height: 1.2; }
+h2 { font-size: 25px; line-height: 1.3; }
+h3 { font-size: 19px; line-height: 1.35; }
+h4 { font-size: 16px; line-height: 1.4; }
+
+.eyebrow,
+.section-kicker,
+.nav-label,
+.feature-meta {
+  font-size: 12px;
+  letter-spacing: 0.11em;
+}
+
+/* Buttons: consistent size, readable labels, and clear spacing. */
+button,
+.primary-button,
+.secondary-button,
+.text-button,
+.sample-chip,
+.browse-button {
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.primary-button,
+.secondary-button {
+  min-height: 44px;
+  padding: 11px 18px;
+  gap: 10px;
+  white-space: normal;
+}
+
+.text-button,
+.sample-chip,
+.browse-button {
+  min-height: 38px;
+  padding: 8px 12px;
+}
+
+/* Gmail actions should sit in a tidy row, wrap on smaller screens, and never collide. */
+.email-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.email-actions .primary-button,
+.email-actions .secondary-button {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.email-actions .primary-button {
+  min-width: 170px;
+}
+
+.email-actions .secondary-button {
+  min-width: 150px;
+}
+
+/* General action groups and page layouts get consistent spacing. */
+.hero-actions,
+.sample-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.panel-heading {
+  gap: 14px;
+}
+
+.page-content {
+  min-width: 0;
+}
+
+.panel,
+.result-panel,
+.result-details,
+.document-result {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.json-result,
+pre {
+  max-width: 100%;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Email rows and long subject lines must stay inside the card. */
+.indicator,
+.email-actions,
+.result-header {
+  min-width: 0;
+}
+
+.indicator > span {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+  html { font-size: 15px; }
+
+  .email-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .email-actions .primary-button,
+  .email-actions .secondary-button {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .primary-button,
+  .secondary-button {
+    min-height: 46px;
+  }
+
+  .result-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}

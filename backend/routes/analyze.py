@@ -5,7 +5,10 @@ from pydantic import BaseModel, Field, field_validator
 from engine.scam_rules import analyze_rules
 from engine.risk_score import calculate_risk, get_risk_level
 from engine.gemini_analyzer import analyze_with_gemini
-from engine.ml_predictor import predict_scam
+from engine.ml_predictor import (
+    predict_scam,
+    explain_scam_prediction
+)
 
 router = APIRouter()
 
@@ -49,6 +52,7 @@ def analyze_text(message: str) -> dict:
 
     # 2. ML prediction
     ml_score = predict_scam(message)
+    ml_explanation = explain_scam_prediction(message)
 
     # 3. Combined risk score
     score = calculate_risk(
@@ -93,7 +97,11 @@ def analyze_text(message: str) -> dict:
         "category": local_result["category"],
         "indicators": local_result["indicators"],
         "recommendation": recommendation,
-        "gemini_analysis": gemini_result
+        "gemini_analysis": gemini_result,
+        "explainability": {
+    "rule_evidence": local_result["indicators"],
+    "ml_explanation": ml_explanation
+}
     }
 
 

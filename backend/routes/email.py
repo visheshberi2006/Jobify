@@ -45,6 +45,7 @@ def connect_gmail():
         )
 
 
+
 @router.get("/oauth2callback")
 def gmail_oauth_callback(
     code: str = Query(...),
@@ -55,20 +56,25 @@ def gmail_oauth_callback(
     try:
         finish_oauth(code=code, state=state)
 
-        return {
-            "success": True,
-            "message": "Gmail connected successfully.",
-        }
+        return RedirectResponse(
+            url="http://localhost:5173/?gmail=connected",
+            status_code=303,
+        )
 
     except ValueError as error:
-        raise HTTPException(status_code=400, detail=str(error))
+        logger.warning("Gmail OAuth callback validation failed: %s", error)
+        return RedirectResponse(
+            url="http://localhost:5173/?gmail=error",
+            status_code=303,
+        )
 
     except Exception:
         logger.exception("Gmail OAuth callback failed")
-        raise HTTPException(
-            status_code=500,
-            detail="Gmail authorization failed. Check backend logs.",
+        return RedirectResponse(
+            url="http://localhost:5173/?gmail=error",
+            status_code=303,
         )
+
 
 
 @router.get("/status")
