@@ -41,11 +41,14 @@ from routes.resume import router as resume_router
 from routes.skill_coach import router as skill_coach_router
 from routes.document_analysis import router as document_router
 from routes.email import router as email_router
+from services.database import initialize_database
+from routes.interview import router as interview_router
 app = FastAPI(
     title="ScamShield AI",
     description="AI-powered job fraud detection platform",
     version="0.1.0"
 )
+initialize_database()
 
 app.add_middleware(
     CORSMiddleware,
@@ -61,6 +64,7 @@ app.include_router(resume_router, prefix="/api")
 app.include_router(skill_coach_router, prefix="/api")
 app.include_router(document_router, prefix="/api")
 app.include_router(email_router, prefix="/api")
+app.include_router(interview_router, prefix="/api") 
 
 
 @app.get("/")

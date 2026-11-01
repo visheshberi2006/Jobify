@@ -1,0 +1,27 @@
+{
+  "dataset_rows": 17880,
+  "train_rows": 14304,
+  "test_rows": 3576,
+  "class_distribution": {
+    "0": 17014,
+    "1": 866
+  },
+  "fraud_class_precision": 0.8421052631578947,
+  "fraud_class_recall": 0.9248554913294798,
+  "fraud_class_f1": 0.8815426997245179,
+  "accuracy": 0.9879753914988815,
+  "roc_auc": 0.991856896074358,
+  "average_precision": 0.9481125219363115,
+  "confusion_matrix_labels_0_1": [
+    [
+      3373,
+      30
+    ],
+    [
+      13,
+      160
+    ]
+  ],
+  "sklearn_version": "1.9.0",
+  "random_state": 42
+}

@@ -29,6 +29,21 @@ def initialize_database():
             )
         """)
 
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS interview_sessions (
+                id TEXT PRIMARY KEY,
+                target_job TEXT NOT NULL,
+                interview_type TEXT NOT NULL,
+                requested_difficulty TEXT NOT NULL,
+                current_difficulty TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'active',
+                questions_json TEXT NOT NULL DEFAULT '[]',
+                answers_json TEXT NOT NULL DEFAULT '[]',
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+        """)
+
         connection.commit()
 
 

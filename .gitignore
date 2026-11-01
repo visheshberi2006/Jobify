@@ -201,3 +201,14 @@ backend/jobify.db
 # Frontend dependencies and build output
 frontend/node_modules/
 frontend/dist/
+
+# Jobify frontend secrets
+frontend/.env
+frontend/.env.*
+
+# Allow safe example configuration
+!frontend/.env.example
+
+# Keep the active Jobify ML model and evaluation metrics
+!backend/models/jobify_scam_detector.joblib
+!backend/models/evaluation_metrics.json
